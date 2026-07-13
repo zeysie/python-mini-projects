@@ -13,110 +13,155 @@ cards = {"2": 2,
          "J": 10,
          "A": 11}
 
+
 def play_cards():
+    balance = 0
+    print("-" * 33)
+    print("Welcome to the game of blackjack.")
+    print("-" * 33)
     while True:
-        print("\n*************************************************************************************")
-        choice_1 = input("Welcome to a game of blackjack. Would you like to play? Press y for yes and n for no: ").lower()
-        print("\n*************************************************************************************")
-        if choice_1 == "n":
-            print("Sad to see you go...")
-            break
-        elif choice_1 == "y":
-            card_list = list(cards.keys()) * 4
-            first_card = random.choice(card_list)
-            card_list.remove(first_card)
-            first_card_house = random.choice(card_list)
-            card_list.remove(first_card_house)
-            second_card = random.choice(card_list)
-            card_list.remove(second_card)
-            second_card_house = random.choice(card_list)
-            card_list.remove(second_card_house)
+        print("-" * 33)
+        main_choice = input("What would you like to do?\n1: Play \n2: Deposit money\n3: Quit & Cash Out\n"+ "-" * 33 +"\n\nWrite here (1-2-3): ")
+        if main_choice == "1":
+            if balance <= 0:
+                print("\nYou need to deposit money before you can play.\n")
+            else:
+                while True:
+                    bet_choice = input(f"\nYou have a balance of ${balance}. How much money would you like to bet?: $")
+                    try:
+                        flt_bet = float(bet_choice)
+                        if flt_bet <= 0:
+                            print("\nBet amount must be greater than 0.\n")
+                            continue
+                        if flt_bet > balance:
+                            print("\nYou cant bet more than your balance.\n")
+                            continue
+                        else:
+                            break
+                    except ValueError:
+                        print("\nInvalid input. Please enter a number.\n")
+                card_list = list(cards.keys()) * 4
+                first_card = random.choice(card_list)
+                card_list.remove(first_card)
+                first_card_house = random.choice(card_list)
+                card_list.remove(first_card_house)
+                second_card = random.choice(card_list)
+                card_list.remove(second_card)
+                second_card_house = random.choice(card_list)
+                card_list.remove(second_card_house)
 
-            aces_as_11 = 0
-            if first_card == "A": aces_as_11 += 1
-            if second_card == "A": aces_as_11 += 1
+                aces_as_11 = 0
+                if first_card == "A": aces_as_11 += 1
+                if second_card == "A": aces_as_11 += 1
 
-            total = cards.get(first_card) + cards.get(second_card)
+                total = cards.get(first_card) + cards.get(second_card)
 
-            if total > 21 and aces_as_11 > 0:
-                total -= 10
-                aces_as_11 -= 1
+                if total > 21 and aces_as_11 > 0:
+                    total -= 10
+                    aces_as_11 -= 1
 
-            house_aces_as_11 = 0
-            if first_card_house == "A": house_aces_as_11 += 1
-            if second_card_house == "A": house_aces_as_11 += 1
+                house_aces_as_11 = 0
+                if first_card_house == "A": house_aces_as_11 += 1
+                if second_card_house == "A": house_aces_as_11 += 1
 
-            house_total = cards.get(first_card_house) + cards.get(second_card_house)
+                house_total = cards.get(first_card_house) + cards.get(second_card_house)
 
-            if house_total > 21 and house_aces_as_11 > 0:
-                house_total -= 10
-                house_aces_as_11 -= 1
-            
-            print(f"The houses first card is a {first_card_house}.")
-            print(f"Your first card is a {first_card}. Your second card is a {second_card}. The total value is {total}.", end = " ")
-            
-            while True:
-                choice_2 = input(f"Would you like to draw another card? Press y for yes and n for no: ").lower()
-                if choice_2 == "n":
-                    print("You stand. Let's see what the house has.")
-                    break
-                elif choice_2 == "y":
-                    other_card = random.choice(card_list)
-                    card_list.remove(other_card)
-
-                    if other_card == "A":
-                        aces_as_11 += 1
-
-                    total += cards.get(other_card)
-                    print(f"You drew a {other_card}.", end = " ")
-                    
-                    while total > 21 and aces_as_11 > 0:
-                        total -= 10
-                        aces_as_11 -= 1
-                        print("Ace adjusted to 1.", end=" ")
-
-                    if total > 21:
-                        print("The total is over 21. You lost!")
-                        break
-                    elif total == 21:
-                        print("You hit 21! Let's see what the house has.")
-                        choice_2 = "n"
-                        break
-                    else:
-                        print(f"Your new total is {total}.")
-
-            if total <= 21:
-                print(f"The houses second card is a {second_card_house}. Their total is {house_total}.")
-                while house_total < 17:
-                    other_card_house = random.choice(card_list)
-                    card_list.remove(other_card_house)
-
-                    if other_card_house == "A":
-                        house_aces_as_11 += 1
-
-                    house_total += cards.get(other_card_house)
-                    print(f"House drew a {other_card_house}.", end = " ")
-                    
-                    while house_total > 21 and house_aces_as_11 > 0:
-                        house_total -= 10
-                        house_aces_as_11 -= 1
-                        print("Ace adjusted to 1.", end=" ")
-
-                    print(f"Houses new total is {house_total}.", end= " ")
-
-                if house_total > 21:
-                    print(f"Houses total is over 21. Your total is {total}. You won!")
-                elif house_total == 21:
-                    if total == 21:
-                            print("Its a draw.")
-                    else:
-                        print("You lost.")
-                elif total > house_total:
-                    print("You won!")
-                elif total == house_total:
-                    print("It's a draw.")
+                if house_total > 21 and house_aces_as_11 > 0:
+                    house_total -= 10
+                    house_aces_as_11 -= 1
+                
+                print(f"The houses first card is a {first_card_house}.")
+                print(f"Your first card is a {first_card}. Your second card is a {second_card}. The total value is {total}.", end = " ")
+                
+                if total == 21:
+                    print("A natural blackjack! Let's see what the house has.")
                 else:
-                    print("You lost.")
+                    while True:
+                        choice_2 = input(f"Would you like to draw another card? Press y for yes and n for no: ").lower()
+                        if choice_2 == "n":
+                            print("You stand. Let's see what the house has.")
+                            break
+                        elif choice_2 == "y":
+                            other_card = random.choice(card_list)
+                            card_list.remove(other_card)
+
+                            if other_card == "A":
+                                aces_as_11 += 1
+
+                            total += cards.get(other_card)
+                            print(f"You drew a {other_card}.", end = " ")
+                            
+                            while total > 21 and aces_as_11 > 0:
+                                total -= 10
+                                aces_as_11 -= 1
+                                print("Ace adjusted to 1.", end=" ")
+
+                            if total > 21:
+                                balance -= flt_bet
+                                print(f"The total is over 21. You lost ${flt_bet}. New balance is ${balance}.\n")
+                                break
+                            else:
+                                print(f"Your new total is {total}.")
+                        else:
+                            print("\nPlease enter a valid input.\n")
+
+                if total <= 21:
+                    print(f"The houses second card is a {second_card_house}. Their total is {house_total}.")
+                    while house_total < 17:
+                        other_card_house = random.choice(card_list)
+                        card_list.remove(other_card_house)
+
+                        if other_card_house == "A":
+                            house_aces_as_11 += 1
+
+                        house_total += cards.get(other_card_house)
+                        print(f"House drew a {other_card_house}.", end = " ")
+                        
+                        while house_total > 21 and house_aces_as_11 > 0:
+                            house_total -= 10
+                            house_aces_as_11 -= 1
+                            print("Ace adjusted to 1.", end=" ")
+
+                        print(f"Houses new total is {house_total}.")
+
+                    if house_total > 21:
+                        balance += flt_bet
+                        print(f"Houses total is over 21. Your total is {total}. You won ${flt_bet}! New balance is {balance}.")
+                    elif house_total == 21:
+                        if total == 21:
+                                print("Its a draw. Your balance stays the same.")
+                        else:
+                            balance -= flt_bet
+                            print(f"You lost ${flt_bet}. New balance is {balance}.")
+                    elif total > house_total:
+                        balance += flt_bet
+                        print(f"You won ${flt_bet}! New balance is {balance}.")
+                    elif total == house_total:
+                        print("It's a draw. Your balance stays the same.")
+                    else:
+                        balance -= flt_bet
+                        print(f"You lost ${flt_bet}. New balance is {balance}.")
+        elif main_choice == "2":
+            while True:
+                amount = input("\nHow much would you like to deposit?: $")
+                try:
+                    flt_amount = float(amount)
+                    if flt_amount <= 0:
+                        print("\nDeposit amount must be greater than 0.\n")
+                    else:
+                        balance += flt_amount
+                        print(f"\nDeposited ${amount}. New balance is ${balance}.\n")
+                        break
+                except ValueError:
+                    print("\nInvalid input. Please enter a number.\n")
+        elif main_choice == "3":
+            if balance == 0:
+                print("\nSad to see you go. There is no money to cash out.")
+            else:
+                print(f"\nSad to see you go. Cashing out your final balance of ${balance}...")
+            break
+        else:
+            print("\nPlease enter a valid input.\n")
 
 if __name__ == "__main__":
     play_cards()
