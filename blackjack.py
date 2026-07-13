@@ -16,8 +16,8 @@ cards = {"2": 2,
 def play_cards():
     while True:
         print("\n*************************************************************************************")
-        choice_1 = input("Welcome to a game of blackjack. Would you like to play? Press y for yes and n for no: \n*************************************************************************************").lower()
-        print("*************************************************************************************")
+        choice_1 = input("Welcome to a game of blackjack. Would you like to play? Press y for yes and n for no: ").lower()
+        print("\n*************************************************************************************")
         if choice_1 == "n":
             print("Sad to see you go...")
             break
