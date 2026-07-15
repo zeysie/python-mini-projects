@@ -89,7 +89,12 @@ def play_cards():
                                 aces_as_11 += 1
 
                             total += cards.get(other_card)
+                            
                             print(f"You drew a {other_card}.", end = " ")
+
+                            if total == 21:
+                                print("Your total is 21! Lets see what the house has.")
+                                break
                             
                             while total > 21 and aces_as_11 > 0:
                                 total -= 10
