@@ -4,7 +4,8 @@ A collection of terminal-based Python games and small applications. I created th
 
 ## Projects Included
 
-*   **Blackjack:** A fully playable terminal Blackjack game against a computer dealer. Features ace value adjustments (1 vs 11) and betting. 
+*   **Blackjack:** A terminal Blackjack game against a computer dealer. Features ace value adjustments (1 vs 11) and betting. 
+*   **Hangman:** A classic terminal word-guessing game. Features ASCII art and dynamic letter tracking.
 
 *(More projects coming soon!)*
 
