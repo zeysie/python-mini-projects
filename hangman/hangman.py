@@ -2,40 +2,61 @@ import random
 
 hangman_parts = [
 r"""
-    
-  O 
-    
-     
-   """,
+ ________
+|    
+|    
+|    
+|     
+|   """,
 r"""
-    
-  O 
-  | 
-   """,
+ ________
+|    
+|   O 
+|    
+|     
+|   """,
 r"""
-    
-  O 
-  | 
- /  """,
+ ________
+|    
+|   O 
+|   |
+|     
+|   """,
 r"""
-    
-  O 
-  | 
- / \ """,
+ ________
+|    
+|   O 
+|   | 
+|  /  
+|   """,
 r"""
-    
-  O 
- /| 
- / \ """,
+ ________
+|    
+|   O 
+|   | 
+|  / \   
+|   """,
 r"""
-  O 
- /|\ 
- / \ """,
+ ________
+|    
+|   O 
+|  /| 
+|  / \   
+|   """,
 r"""
-  | 
-  O 
- /|\ 
- / \ """
+ ________
+|    
+|   O 
+|  /|\
+|  / \   
+|   """,
+r"""
+ ________
+|   |
+|   O 
+|  /|\
+|  / \   
+|   """,
 ]
 
 words = []
@@ -45,113 +66,96 @@ with open("words.txt", "r") as file:
         clean_word = line.strip().lower() 
         words.append(clean_word)
 
-def hangman_game():
+
+def main():
     print("-" * 31)
     print("Welcome to the game of Hangman.")
     print("-" * 31)
 
-    word = random.choice(words)
-    print(" ".join("_" * len(word)))
-
-    counter = 0
-    new_print = "_" * len(word)
-    hangman_pic = ""
-    guesses = []
-    while True:
-        if counter == 7:
-            print(f"\nYou lose! The word was {word}.", end= " ")
-            if ask_play_again():
-                words.remove(word)
-                word, counter, new_print, hangman_pic, guesses = reset_game()
+    is_playing = True
+    
+    while is_playing:
+        play_round()
+        while True:
+            again_choice = input("Would you like to try again? (y/n): ").lower()
+            if again_choice not in ["y", "n"]:
+                print("\nInvalid input. Please press y for yes and n for no.")
                 continue
-            else:
+            elif again_choice == "n":
+                print("\nThanks for playing!")
+                is_playing = False
                 break
-        letter = input("\nEnter the letter you would like to check: ").lower()
-        if not letter.isalpha():
-            print("\nInvalid input. Please enter a letter.")
+            elif again_choice == "y":
+                break
+
+
+def play_round():
+    word = random.choice(words)
+
+    wrong_guess_counter = 0
+    guesses = []
+
+    print_hangman(wrong_guess_counter, "_" * len(word))
+
+    while True:
+        if wrong_guess_counter == 7:
+            print(f"\nYou lost. The word was {word}.", end=" ")
+            return
+        guess = input("\nEnter the letter or word you would like to check: ").lower()
+
+        # Check validity
+        if not guess.isalpha():
+            print("\nInvalid input. Please enter a letter or a word.")
             continue
-        if letter in guesses:
+        elif guess in guesses:
             print("\nYou already guessed that.")
             continue
-        if len(letter) > 1:
-            if letter == word:
-                print("\nYou guessed correctly!", end=" ")
-                if ask_play_again():
-                    words.remove(word)
-                    word, counter, new_print, hangman_pic, guesses = reset_game()
-                    continue
-            else:
-                print(f"\n{letter} is not the word.")
-                hangman_pic = hangman_parts[counter]
-                print(hangman_pic)
-                print()
-                counter += 1
-                print(" ".join(new_print))
-                guesses.append(letter)
-                continue
-        if letter in word:
-            newest_print = hangman_print(word, letter, new_print)
-            print(hangman_pic)
+        
+        guesses.append(guess)
+
+        new_print = current_print(guesses, word)
+
+        if new_print == word:
             print()
-            print(" ".join(newest_print))
-            if newest_print == word:
-                print("\nYou won!", end= " ")
-                if ask_play_again():
-                    words.remove(word)
-                    word, counter, new_print, hangman_pic, guesses = reset_game()
-                    continue
-                else:
-                    break
-            new_print = newest_print
-        else:
-            print("\nThe letter is not in the word.")
-            hangman_pic = hangman_parts[counter]
-            print(hangman_pic)
-            print()
-            counter += 1
             print(" ".join(new_print))
-        guesses.append(letter)
+            print(f"\nYou guessed correctly!", end=" ")
+            return
 
-def hangman_print(word, letter, new_print):
-    indexes = []
-    counter = 0
-    for let in word:
-        if letter == let:
-            indexes.append(counter)
-        counter += 1
-    newest_print = ""
-    for i in range(len(new_print)):
-        if i in indexes:
-            newest_print += letter
-        elif new_print[i] == "_":
-            newest_print += "_"
+        # Check and respond according to the guesses lenght
+        if len(guess) > 1:
+            if guess == word:
+                print()
+                print(" ".join(word))
+                print("\nYou guessed correctly!", end=" ")
+                return
+            else:
+                wrong_guess_counter += 1
+                print(f"\n{guess} is not the word.")
+                print_hangman(wrong_guess_counter, new_print)
+                continue
         else:
-            newest_print += new_print[i]
-    return newest_print
+            if guess in word:
+                print_hangman(wrong_guess_counter, new_print)
+                continue
+            else:
+                wrong_guess_counter += 1
+                print("\nThe letter is not in the word.")
+                print_hangman(wrong_guess_counter, new_print)
+                continue
 
-def ask_play_again():
-    again_choice = ""
-    while again_choice not in ["y", "n"]:
-        if again_choice == "":
-            again_choice = input("Would you like to try again? (y/n): ").lower()
+
+def current_print(guesses, word):
+    new_print = ""
+    for letter in word:
+        if letter in guesses:
+            new_print += letter
         else:
-            print("\nInvalid input.", end= " ")
-            again_choice = input("Please press y for yes and n for no: ").lower()
-    
-    if again_choice == "n":
-        print("\nThanks for playing!")
-        return False
-    elif again_choice == "y":
-        return True
+            new_print += "_"
+    return new_print
 
-def reset_game():
-    word = random.choice(words)
-    counter = 0
-    new_print = "_" * len(word)
-    hangman_pic = ""
-    guesses = []
+def print_hangman(wrong_guess_counter, new_print):
+    print(hangman_parts[wrong_guess_counter])
     print(" ".join(new_print))
-    return word, counter, new_print, hangman_pic, guesses
 
 if __name__ == "__main__":
-    hangman_game()
+    main()
