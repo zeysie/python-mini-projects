@@ -38,7 +38,12 @@ r"""
  / \ """
 ]
 
-words = ["apple", "pear", "orange", "pinapple", "tomato"]
+words = []
+
+with open("words.txt", "r") as file:
+    for line in file:
+        clean_word = line.strip().lower() 
+        words.append(clean_word)
 
 def hangman_game():
     print("-" * 31)
@@ -46,26 +51,18 @@ def hangman_game():
     print("-" * 31)
 
     word = random.choice(words)
-    print("_" * len(word))
+    print(" ".join("_" * len(word)))
 
     counter = 0
     new_print = "_" * len(word)
     hangman_pic = ""
-    guessed_letters = []
+    guesses = []
     while True:
         if counter == 7:
             print(f"\nYou lose! The word was {word}.", end= " ")
             if ask_play_again():
                 words.remove(word)
-                if len(words) == 0:
-                        print("\nYou guessed all the words in the game. Thanks for playing!")
-                        break
-                word = random.choice(words)
-                counter = 0
-                new_print = "_" * len(word)
-                hangman_pic = ""
-                guessed_letters = []
-                print(new_print)
+                word, counter, new_print, hangman_pic, guesses = reset_game()
                 continue
             else:
                 break
@@ -73,44 +70,35 @@ def hangman_game():
         if not letter.isalpha():
             print("\nInvalid input. Please enter a letter.")
             continue
-        if letter in guessed_letters:
-            print("\nYou already guessed that letter.")
+        if letter in guesses:
+            print("\nYou already guessed that.")
             continue
         if len(letter) > 1:
             if letter == word:
                 print("\nYou guessed correctly!", end=" ")
                 if ask_play_again():
                     words.remove(word)
-                    if len(words) == 0:
-                        print("\nYou guessed all the words in the game. Thanks for playing!")
-                        break
-                    word = random.choice(words)
-                    counter = 0
-                    new_print = "_" * len(word)
-                    hangman_pic = ""
-                    guessed_letters = []
-                    print(new_print)
+                    word, counter, new_print, hangman_pic, guesses = reset_game()
                     continue
             else:
-                print("\nInvalid input. Please enter a single letter.")
+                print(f"\n{letter} is not the word.")
+                hangman_pic = hangman_parts[counter]
+                print(hangman_pic)
+                print()
+                counter += 1
+                print(" ".join(new_print))
+                guesses.append(letter)
                 continue
         if letter in word:
             newest_print = hangman_print(word, letter, new_print)
             print(hangman_pic)
-            print(newest_print)
+            print()
+            print(" ".join(newest_print))
             if newest_print == word:
                 print("\nYou won!", end= " ")
                 if ask_play_again():
                     words.remove(word)
-                    if len(words) == 0:
-                        print("\nYou guessed all the words in the game. Thanks for playing!")
-                        break
-                    word = random.choice(words)
-                    counter = 0
-                    new_print = "_" * len(word)
-                    hangman_pic = ""
-                    guessed_letters = []
-                    print(new_print)
+                    word, counter, new_print, hangman_pic, guesses = reset_game()
                     continue
                 else:
                     break
@@ -119,9 +107,10 @@ def hangman_game():
             print("\nThe letter is not in the word.")
             hangman_pic = hangman_parts[counter]
             print(hangman_pic)
+            print()
             counter += 1
-            print(new_print)
-        guessed_letters.append(letter)
+            print(" ".join(new_print))
+        guesses.append(letter)
 
 def hangman_print(word, letter, new_print):
     indexes = []
@@ -129,8 +118,7 @@ def hangman_print(word, letter, new_print):
     for let in word:
         if letter == let:
             indexes.append(counter)
-            counter += 1
-        else: counter += 1
+        counter += 1
     newest_print = ""
     for i in range(len(new_print)):
         if i in indexes:
@@ -155,6 +143,15 @@ def ask_play_again():
         return False
     elif again_choice == "y":
         return True
+
+def reset_game():
+    word = random.choice(words)
+    counter = 0
+    new_print = "_" * len(word)
+    hangman_pic = ""
+    guesses = []
+    print(" ".join(new_print))
+    return word, counter, new_print, hangman_pic, guesses
 
 if __name__ == "__main__":
     hangman_game()
