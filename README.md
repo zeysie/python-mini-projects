@@ -23,7 +23,7 @@ To play blackjack and hangman on your local machine, you will need to have [Pyth
     ```bash
     python project_name.py
 
-To run recipe recommender, you only need to paste this url to the search bar: https://recipe-recc.streamlit.app/
+To run recipe recommender, you can click here: https://recipe-recc.streamlit.app/
 
 ## What I Learned
 
