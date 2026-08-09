@@ -11,7 +11,7 @@ A collection of terminal-based Python games and small applications. I created th
 
 ## How to Run
 
-To play any of these games on your local machine, you will need to have [Python](https://www.python.org/downloads/) installed. 
+To play blackjack and hangman on your local machine, you will need to have [Python](https://www.python.org/downloads/) installed. 
 
 1. Clone this repository to your local machine:
    ```bash
@@ -22,6 +22,8 @@ To play any of these games on your local machine, you will need to have [Python]
 3. Run the Python file:
     ```bash
     python project_name.py
+
+To run recipe recommender, you only need to paste this url to the search bar: https://recipe-recc.streamlit.app/
 
 ## What I Learned
 
