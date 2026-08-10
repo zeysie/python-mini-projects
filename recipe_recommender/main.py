@@ -41,7 +41,7 @@ if ingredients:
 
     scored_results = []
 
-    with open('food.csv', mode='r', encoding='utf-8') as file:
+    with open('recipe_recommender/food.csv', mode='r', encoding='utf-8') as file:
             reader = csv.reader(file)
 
             next(reader)
@@ -172,8 +172,8 @@ if find_recipes:
             final_grams = 0
 
             if match:
-                with open('food_portion.csv', mode='r', encoding='utf-8') as file3, \
-                    open('food.csv', mode='r', encoding='utf-8') as file4:
+                with open('recipe_recommender/food_portion.csv', mode='r', encoding='utf-8') as file3, \
+                    open('recipe_recommender/food.csv', mode='r', encoding='utf-8') as file4:
                     portion_reader1 = csv.reader(file3)
                     id_reader2 = csv.reader(file4)
                     next(portion_reader1)
