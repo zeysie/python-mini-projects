@@ -1,7 +1,12 @@
 import streamlit as st
 import csv
 import requests
-import base64
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
 
 st.markdown('<h1 style="text-align: center; color: chocolate;">Welcome to the Recipe Recommender</h1>', unsafe_allow_html=True)
 st.write("\n")
@@ -118,8 +123,6 @@ if ingredients:
                     if st.button("Remove", key=f"remove_{item}"):
                         del st.session_state.selected[item]
                         st.rerun()
-
-API_KEY = "" # Need to hide this
 
 st.write("\n")
 
