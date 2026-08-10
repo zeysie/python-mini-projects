@@ -83,7 +83,7 @@ if ingredients:
                     
                 with col2:
                     units = {}
-                    with open('food.csv', mode='r', encoding='utf-8') as file1:
+                    with open('recipe_recommender/food.csv', mode='r', encoding='utf-8') as file1:
                         id_reader = csv.reader(file1)
                         
                         for row in id_reader:
@@ -92,7 +92,7 @@ if ingredients:
                                 id = row[0]
                                 break
 
-                    with open('food_portion.csv', mode='r', encoding='utf-8') as file2:
+                    with open('recipe_recommender/food_portion.csv', mode='r', encoding='utf-8') as file2:
                         portion_reader = csv.reader(file2)
 
                         for row in portion_reader:
