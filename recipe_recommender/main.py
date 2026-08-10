@@ -126,121 +126,125 @@ if ingredients:
 
 st.write("\n")
 
+find_recipes = False
 col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
     if st.button("Find Recipes",type="primary", use_container_width=True):
-        cleaned_ingredients = {}
-        for item in st.session_state.selected.keys():
-            clean_ingredient = item.replace(", ", "+")
-            cleaned_ingredients[clean_ingredient] = st.session_state.selected.get(item)
+        find_recipes = True
+if find_recipes:
+    cleaned_ingredients = {}
+    for item in st.session_state.selected.keys():
+        clean_ingredient = item.split(",")[0].strip().replace(" ", "+").lower()
+        cleaned_ingredients[clean_ingredient] = st.session_state.selected.get(item)
 
-        ingredient_string = ",".join(cleaned_ingredients.keys())
+    ingredient_string = ",".join(cleaned_ingredients.keys())
 
-        recipe_url = f"https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredient_string}&number=10&ranking=2&apiKey={API_KEY}"
+    recipe_url = f"https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredient_string}&number=5&ranking=1&apiKey={API_KEY}"
 
-        response = requests.get(recipe_url)
-        data = response.json()
+    response = requests.get(recipe_url)
+    data = response.json()
 
-        valid_recipes = []
+    valid_recipes = []
 
-        for recipe in data:
-            valid_recipe = True
+    for recipe in data:
+        valid_recipe = True
 
-            recipe_ingredients_url = f"https://api.spoonacular.com/recipes/{recipe["id"]}/information?includeNutrition=false&apiKey={API_KEY}"
-            response2 = requests.get(recipe_ingredients_url)
-            data2 = response2.json()
+        recipe_ingredients_url = f"https://api.spoonacular.com/recipes/{recipe["id"]}/information?includeNutrition=false&apiKey={API_KEY}"
+        response2 = requests.get(recipe_ingredients_url)
+        data2 = response2.json()
 
-            for ingredient in data2["extendedIngredients"]:
-                name = ingredient["name"].lower()
+        for ingredient in data2["extendedIngredients"]:
+            name = ingredient["name"].lower()
 
-                measurements = ingredient["measures"]["metric"]
+            measurements = ingredient["measures"]["metric"]
 
-                amount = measurements["amount"]
-                recipe_unit = measurements["unitLong"].lower()
+            amount = measurements["amount"]
+            recipe_unit = measurements["unitLong"].lower()
 
-                match = None
-                for user_ingredient in st.session_state.selected.keys():
-                    if name in user_ingredient or user_ingredient in name:
-                        match = True
-                        description2 = user_ingredient
-                        users_amount = st.session_state.selected.get(user_ingredient)
-                        break
+            match = None
+            for user_ingredient in st.session_state.selected.keys():
+                if name in user_ingredient or user_ingredient in name:
+                    match = True
+                    description2 = user_ingredient
+                    users_amount = st.session_state.selected.get(user_ingredient)
+                    break
 
-                final_grams = 0
+            final_grams = 0
 
-                if match:
-                    with open('food_portion.csv', mode='r', encoding='utf-8') as file3, \
-                        open('food.csv', mode='r', encoding='utf-8') as file4:
-                        portion_reader1 = csv.reader(file3)
-                        id_reader2 = csv.reader(file4)
-                        next(portion_reader1)
-                        next(id_reader2)
-                        
-                        for row in id_reader2:
-                            description = row[2].lower()
-                            if description == description2:
-                                id = row[0]
-                                break
-
-                        unit_families = [
-                            ["tbsp", "tbs", "tablespoon", "tablespoons"],
-                            ["tsp", "teaspoon", "teaspoons"],
-                            ["oz", "ounce", "ounces"],
-                            ["fl oz", "fluid ounce"],
-                            ["cup", "cups", "c"],
-                            ["lb", "lbs", "pound", "pounds"]
-                        ]
-
-                        search_list = []
-
-                        if recipe_unit in ["g", "gram", "grams"]:
-                            final_grams = amount
-
-                        for unit_list in unit_families:
-                            if recipe_unit in unit_list:
-                                search_list = unit_list
-                                break
-
-                        for row in portion_reader1:
-                            if row[1] == id and row[6] in search_list:
-                                portion_amount = float(row[3])
-                                total_grams = float(row[7])
-
-                                single_unit_weight = total_grams / portion_amount
-
-                                final_grams = amount * single_unit_weight
-                                break
-
-                        if final_grams > users_amount:
-                            valid_recipe = False
+            if match:
+                with open('food_portion.csv', mode='r', encoding='utf-8') as file3, \
+                    open('food.csv', mode='r', encoding='utf-8') as file4:
+                    portion_reader1 = csv.reader(file3)
+                    id_reader2 = csv.reader(file4)
+                    next(portion_reader1)
+                    next(id_reader2)
+                    
+                    for row in id_reader2:
+                        description = row[2].lower()
+                        if description == description2:
+                            id = row[0]
                             break
-            if valid_recipe:
-                valid_recipes.append([recipe, data2])
 
-        for recipe_pair in valid_recipes:
-            col1, col2 = st.columns([2, 3])
-            with col1:
-                st.image(recipe_pair[0]["image"], use_container_width=True)
-            with col2:
-                st.subheader(recipe_pair[0]["title"])
-                st.write("**Ingredients:**")
+                    unit_families = [
+                        ["tbsp", "tbs", "tablespoon", "tablespoons"],
+                        ["tsp", "teaspoon", "teaspoons"],
+                        ["oz", "ounce", "ounces"],
+                        ["fl oz", "fluid ounce"],
+                        ["cup", "cups", "c"],
+                        ["lb", "lbs", "pound", "pounds"]
+                    ]
 
-                missing_ingredients = []
+                    search_list = []
 
-                for ingredient in recipe_pair[0]["missedIngredients"]:
-                    missing_ingredients.append([ingredient["id"], ingredient["original"]])
+                    if recipe_unit in ["g", "gram", "grams"]:
+                        final_grams = amount
 
-                all_ingredients = []
+                    for unit_list in unit_families:
+                        if recipe_unit in unit_list:
+                            search_list = unit_list
+                            break
 
-                for ingredient in recipe_pair[1]["extendedIngredients"]:
-                    all_ingredients.append([ingredient["id"], ingredient["original"]])
+                    for row in portion_reader1:
+                        if row[1] == id and row[6] in search_list:
+                            portion_amount = float(row[3])
+                            total_grams = float(row[7])
 
-                user_ingredients = []
-                for ingredient in all_ingredients:
-                    if ingredient[0] not in missing_ingredients:
-                        user_ingredients.append(ingredient[1])
+                            single_unit_weight = total_grams / portion_amount
 
-                for ingredient in user_ingredients:
-                    st.write(ingredient)
-                for ingredient in missing_ingredients:
-                    st.write(f"{ingredient[1]} (missing)")
+                            final_grams = amount * single_unit_weight
+                            break
+
+                if final_grams > users_amount:
+                    valid_recipe = False
+                    break
+        if valid_recipe:
+            valid_recipes.append([recipe, data2])
+
+    for recipe_pair in valid_recipes:
+        col1, col2 = st.columns([2, 3])
+        with col1:
+            st.image(recipe_pair[0]["image"], use_container_width=True)
+        with col2:
+            st.subheader(recipe_pair[0]["title"])
+            st.write("**Ingredients:**")
+
+            missing_ingredients = []
+            missing_ids = []
+
+            for ingredient in recipe_pair[0]["missedIngredients"]:
+                missing_ingredients.append(ingredient["original"])
+                missing_ids.append(ingredient["id"])
+
+            all_ingredients = []
+            for ingredient in recipe_pair[1]["extendedIngredients"]:
+                all_ingredients.append([ingredient["id"], ingredient["original"]])
+
+            user_ingredients = []
+            for ingredient in all_ingredients:
+                if ingredient[0] not in missing_ids: 
+                    user_ingredients.append(ingredient[1])
+
+            for ingredient in user_ingredients:
+                st.write(f"- {ingredient}")
+            for ingredient in missing_ingredients:
+                st.write(f"- {ingredient} *(missing)*")
