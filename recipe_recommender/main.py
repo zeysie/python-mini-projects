@@ -1,6 +1,12 @@
 import streamlit as st
 import csv
 import requests
+from pathlib import Path
+
+base_dir = Path(__file__).resolve().parent
+food_file_path = base_dir / "food.csv"
+portion_file_path = base_dir / "food_portion.csv"
+
 
 API_KEY = st.secrets.get("API_KEY")
 
@@ -37,7 +43,7 @@ if ingredients:
 
     scored_results = []
 
-    with open('food.csv', mode='r', encoding='utf-8') as file:
+    with open(food_file_path, mode='r', encoding='utf-8') as file:
             reader = csv.reader(file)
 
             next(reader)
@@ -79,7 +85,7 @@ if ingredients:
                     
                 with col2:
                     units = {}
-                    with open('food.csv', mode='r', encoding='utf-8') as file1:
+                    with open(food_file_path, mode='r', encoding='utf-8') as file1:
                         id_reader = csv.reader(file1)
                         
                         for row in id_reader:
@@ -88,7 +94,7 @@ if ingredients:
                                 id = row[0]
                                 break
 
-                    with open('food_portion.csv', mode='r', encoding='utf-8') as file2:
+                    with open(portion_file_path, mode='r', encoding='utf-8') as file2:
                         portion_reader = csv.reader(file2)
 
                         for row in portion_reader:
@@ -168,7 +174,7 @@ if find_recipes:
             final_grams = 0
 
             if match:
-                with open('food_portion.csv', mode='r', encoding='utf-8') as file3, \
+                with open(portion_file_path, mode='r', encoding='utf-8') as file3, \
                     open('food.csv', mode='r', encoding='utf-8') as file4:
                     portion_reader1 = csv.reader(file3)
                     id_reader2 = csv.reader(file4)
