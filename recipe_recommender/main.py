@@ -223,30 +223,27 @@ if find_recipes:
             valid_recipes.append([recipe, data2])
 
     for recipe_pair in valid_recipes:
-        col1, col2 = st.columns([2, 3])
-        with col1:
-            st.image(recipe_pair[0]["image"], use_container_width=True)
-        with col2:
-            st.subheader(recipe_pair[0]["title"])
-            st.write("**Ingredients:**")
+        st.image(recipe_pair[0]["image"], use_container_width=True)
+        st.subheader(recipe_pair[0]["title"])
+        st.write("**Ingredients:**")
 
-            missing_ingredients = []
-            missing_ids = []
+        missing_ingredients = []
+        missing_ids = []
 
-            for ingredient in recipe_pair[0]["missedIngredients"]:
-                missing_ingredients.append(ingredient["original"])
-                missing_ids.append(ingredient["id"])
+        for ingredient in recipe_pair[0]["missedIngredients"]:
+            missing_ingredients.append(ingredient["original"])
+            missing_ids.append(ingredient["id"])
 
-            all_ingredients = []
-            for ingredient in recipe_pair[1]["extendedIngredients"]:
-                all_ingredients.append([ingredient["id"], ingredient["original"]])
+        all_ingredients = []
+        for ingredient in recipe_pair[1]["extendedIngredients"]:
+            all_ingredients.append([ingredient["id"], ingredient["original"]])
 
-            user_ingredients = []
-            for ingredient in all_ingredients:
-                if ingredient[0] not in missing_ids: 
-                    user_ingredients.append(ingredient[1])
+        user_ingredients = []
+        for ingredient in all_ingredients:
+            if ingredient[0] not in missing_ids: 
+                user_ingredients.append(ingredient[1])
 
-            for ingredient in user_ingredients:
-                st.write(f"- {ingredient}")
-            for ingredient in missing_ingredients:
-                st.write(f"- {ingredient} *(missing)*")
+        for ingredient in user_ingredients:
+            st.write(f"- {ingredient}")
+        for ingredient in missing_ingredients:
+            st.write(f"- {ingredient} *(missing)*")
