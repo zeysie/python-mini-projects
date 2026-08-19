@@ -1,12 +1,8 @@
 import streamlit as st
 import csv
 import requests
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
-API_KEY = os.getenv("API_KEY")
+API_KEY = st.secrets.get("API_KEY")
 
 st.markdown('<h1 style="text-align: center; color: chocolate;">Welcome to the Recipe Recommender</h1>', unsafe_allow_html=True)
 st.write("\n")
@@ -41,7 +37,7 @@ if ingredients:
 
     scored_results = []
 
-    with open('recipe_recommender/food.csv', mode='r', encoding='utf-8') as file:
+    with open('food.csv', mode='r', encoding='utf-8') as file:
             reader = csv.reader(file)
 
             next(reader)
@@ -83,7 +79,7 @@ if ingredients:
                     
                 with col2:
                     units = {}
-                    with open('recipe_recommender/food.csv', mode='r', encoding='utf-8') as file1:
+                    with open('food.csv', mode='r', encoding='utf-8') as file1:
                         id_reader = csv.reader(file1)
                         
                         for row in id_reader:
@@ -92,7 +88,7 @@ if ingredients:
                                 id = row[0]
                                 break
 
-                    with open('recipe_recommender/food_portion.csv', mode='r', encoding='utf-8') as file2:
+                    with open('food_portion.csv', mode='r', encoding='utf-8') as file2:
                         portion_reader = csv.reader(file2)
 
                         for row in portion_reader:
@@ -172,8 +168,8 @@ if find_recipes:
             final_grams = 0
 
             if match:
-                with open('recipe_recommender/food_portion.csv', mode='r', encoding='utf-8') as file3, \
-                    open('recipe_recommender/food.csv', mode='r', encoding='utf-8') as file4:
+                with open('food_portion.csv', mode='r', encoding='utf-8') as file3, \
+                    open('food.csv', mode='r', encoding='utf-8') as file4:
                     portion_reader1 = csv.reader(file3)
                     id_reader2 = csv.reader(file4)
                     next(portion_reader1)
