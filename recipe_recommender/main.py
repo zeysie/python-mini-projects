@@ -247,3 +247,7 @@ if find_recipes:
             st.write(f"- {ingredient}")
         for ingredient in missing_ingredients:
             st.write(f"- {ingredient} *(missing)*")
+
+        st.write()
+        st.write("**Recipe link: **", end = "")
+        st.write(f"{recipe_pair[0]["sourceUrl"]}")
