@@ -175,7 +175,7 @@ if find_recipes:
 
             if match:
                 with open(portion_file_path, mode='r', encoding='utf-8') as file3, \
-                    open('food.csv', mode='r', encoding='utf-8') as file4:
+                    open(food_file_path, mode='r', encoding='utf-8') as file4:
                     portion_reader1 = csv.reader(file3)
                     id_reader2 = csv.reader(file4)
                     next(portion_reader1)
